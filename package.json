@@ -1,0 +1,46 @@
+{
+  "name": "tapokeeper",
+  "version": "1.0.0",
+  "description": "TapoKeeper - Monitor and control TP-Link Tapo Smart Plugs with real-time power tracking",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "tapokeeper": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "help": "node index.js --help",
+    "dump": "node index.js --dump",
+    "verbose": "node index.js --verbose",
+    "bundle": "webpack --config webpack.config.cjs",
+    "build": "npm run bundle && pkg dist/tapokeeper.cjs --targets node18-win-x64 --output dist/tapokeeper.exe",
+    "build:all": "npm run bundle && pkg dist/tapokeeper.cjs --targets node18-win-x64,node18-macos-x64,node18-linux-x64 --output dist/tapokeeper",
+    "dist": "echo Windows batch launcher available at tapokeeper.bat"
+  },
+  "pkg": {
+    "assets": [
+      ".env.example"
+    ],
+    "outputPath": "dist"
+  },
+  "keywords": [
+    "tapo",
+    "tplink",
+    "power",
+    "monitoring"
+  ],
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "cli-table3": "^0.6.3",
+    "tp-link-tapo-connect": "^2.0.8"
+  },
+  "devDependencies": {
+    "boxednode": "^2.4.4",
+    "caxa": "^3.0.1",
+    "esbuild": "^0.25.10",
+    "pkg": "^5.8.1",
+    "webpack": "^5.102.0",
+    "webpack-cli": "^6.0.1"
+  }
+}
