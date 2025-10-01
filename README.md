@@ -1,6 +1,6 @@
 # TapoKeeper
 
-![Screenshot](Screenshot.png)
+![Screenshot](screenshot.png)
 
 **Monitor and control TP-Link Tapo Smart Plugs with real-time power tracking**
 
