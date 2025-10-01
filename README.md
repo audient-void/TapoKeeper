@@ -1,8 +1,11 @@
 # TapoKeeper
 
+![Screenshot](Screenshot.png)
+
 **Monitor and control TP-Link Tapo Smart Plugs with real-time power tracking**
 
 A Node.js CLI tool that connects to the Tapo Cloud API to retrieve real-time power consumption data from compatible devices (P110, P115, etc.) and displays it in a formatted table with periodic updates. Includes interactive device control and data export functionality.
+
 
 ![License](https://img.shields.io/badge/license-AGPL%20v3%20%7C%20Commercial-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D16-brightgreen.svg)
