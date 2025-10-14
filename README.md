@@ -13,8 +13,9 @@ A Node.js CLI tool that connects to the Tapo Cloud API to retrieve real-time pow
 ## Features
 
 - 📊 **Real-time monitoring** - Live power consumption display with auto-refresh
+- 📈 **Graph mode** - Visual power consumption charts with customizable time windows
 - 🎮 **Interactive control** - Toggle devices on/off with keyboard shortcuts
-- 📁 **Data export** - Save reports in Markdown or CSV format
+- 📁 **Data export** - Save reports in Markdown (with units) or CSV (numeric values only)
 - 🔍 **Smart discovery** - Automatic device detection via ARP or IP scanning
 - 💾 **Dump modes** - One-shot data collection and phantom power testing
 - 🖥️ **Standalone executable** - No Node.js required for end users
@@ -35,9 +36,9 @@ tapokeeper.exe --help
 # Install dependencies
 npm install
 
-# Create .env file with your credentials
-cp .env.example .env
-# Edit .env and add your TAPO_EMAIL and TAPO_PASSWORD
+# Create env file with your credentials
+cp env.example env
+# Edit env and add your TAPO_EMAIL and TAPO_PASSWORD
 
 # Run the monitor
 npm start
@@ -45,7 +46,7 @@ npm start
 
 ## Configuration
 
-Create a `.env` file with your Tapo account credentials:
+Create an `env` file (no dot prefix) with your Tapo account credentials:
 
 ```env
 TAPO_EMAIL=your-tapo-account@email.com
@@ -83,19 +84,43 @@ npm start -- --verbose
 # Set custom polling interval (2 seconds)
 npm start -- --interval 2000
 
+# Graph mode: real-time power consumption visualization
+npm start -- --graph                   # Default 2-minute window
+npm start -- --graph --graph-time 300  # 5-minute window
+
 # Dump mode: collect data and exit
-npm start -- --dump                    # Markdown format
-npm start -- --dump csv                # CSV format
+npm start -- --dump                    # Markdown format (includes units: W, kWh)
+npm start -- --dump csv                # CSV format (numeric values only, no units)
 
 # Turn on OFF devices, wait 5s, then dump power readings
-npm start -- --dump switchon
+npm start -- --dump switchon           # Markdown format
+npm start -- --dump switchon csv       # CSV format
 
 # Check phantom power of OFF devices (turns on, dumps, turns back off)
-npm start -- --dump togglecheck
+npm start -- --dump togglecheck        # Markdown format
+npm start -- --dump togglecheck csv    # CSV format
 
 # Wait 15 seconds before dumping (useful for stabilizing readings)
 npm start -- --dump --dump-interval 15000
 ```
+
+## Data Export Formats
+
+TapoKeeper supports two export formats optimized for different use cases:
+
+### Markdown (.md)
+- **Human-readable** reports with units displayed
+- Includes formatted tables and summary statistics
+- Power values shown as "5.23 W", energy as "0.123 kWh"
+- Best for documentation and viewing
+
+### CSV (.csv)
+- **Machine-readable** format for data analysis
+- **Numeric values only** - units stripped from columns 4, 5, and 6
+- Current Power: `5.23` (not "5.23 W")
+- Today Energy: `0.123` (not "0.123 kWh")
+- Month Energy: `1.234` (not "1.234 kWh")
+- Easy to import into Excel, databases, or analysis tools
 
 ## Building from Source
 
@@ -116,7 +141,7 @@ The executable will be created in `dist/tapokeeper.exe`.
 
 **How it works:** The build uses webpack to bundle ES modules into CommonJS, then pkg packages it into a standalone executable with the Node.js runtime included.
 
-See [BUILD.md](BUILD.md) for detailed build documentation.
+See [docs/BUILD.md](docs/BUILD.md) for detailed build documentation.
 
 ## Screenshots
 
@@ -138,13 +163,14 @@ Controls: [1-2] toggle device | [d] dump to .md | [c] dump to .csv | [q] quit
 
 ## Architecture
 
-**Single-file application** - All logic in `index.js` (837 lines)
+**Single-file application** - All logic in `src/index.js` (~1173 lines)
 
 **Key features:**
 - ES Modules with top-level await
 - Intelligent device discovery (manual IPs → ARP scan → IP subnet scan)
 - 5-minute device cache to reduce network load
 - Batch parallel IP scanning (50 IPs at a time, 1.5s timeout)
+- Real-time graphing with blessed-contrib for visual monitoring
 - Graceful handling of devices without energy monitoring support
 
 ## Supported Devices
@@ -172,7 +198,7 @@ Change your password on the Tapo App and it should upload new credentials to the
 
 ### Devices not discovered
 
-1. Try manual IP mappings in `.env`:
+1. Try manual IP mappings in `env` file:
    ```env
    MANUAL_IPS=MAC1=IP1,MAC2=IP2
    ```
@@ -183,7 +209,7 @@ Change your password on the Tapo App and it should upload new credentials to the
 
 - Devices have 10-second connection timeout
 - IP scanning uses 1.5s timeout per IP
-- If devices are slow, increase timeouts in `index.js`
+- If devices are slow, increase timeouts in `src/index.js`
 
 ## Development
 
@@ -200,10 +226,6 @@ npm run bundle
 # Test the bundled file
 node dist/tapokeeper.cjs --help
 ```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
@@ -248,3 +270,4 @@ For commercial use without AGPL v3 obligations, a **commercial license** is avai
 ## Support
 
 For issues, questions, or suggestions, please [open an issue](../../issues) on GitHub.
+

@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './index.js',
+  entry: './src/index.js',
   target: 'node',
   mode: 'production',
   output: {
@@ -10,7 +10,9 @@ module.exports = {
     module: false,
   },
   externals: {
-    'local-devices': 'commonjs2 local-devices'
+    'local-devices': 'commonjs2 local-devices',
+    'term.js': 'commonjs2 term.js',
+    'pty.js': 'commonjs2 pty.js'
   },
   experiments: {
     outputModule: false,
