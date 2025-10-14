@@ -48,10 +48,8 @@ debug-*.json
 *.backup
 
 # Releases (keep folder structure)
-releases/*.exe
 releases/*.dmg
 releases/*.tar.gz
-releases/*.zip
 !releases/.gitkeep
 docs/REORGANIZATION.md
 docs/CLAUDE.md
