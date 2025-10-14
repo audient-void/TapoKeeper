@@ -53,3 +53,5 @@ releases/*.dmg
 releases/*.tar.gz
 releases/*.zip
 !releases/.gitkeep
+docs/REORGANIZATION.md
+docs/CLAUDE.md
