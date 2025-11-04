@@ -1,0 +1,133 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:TapoKeeper.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="700"
+        x:Class="TapoKeeper.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="TapoKeeper - TP-Link Tapo Smart Plug Monitor"
+        Width="1200" Height="700"
+        Icon="/Assets/avalonia-logo.ico">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,20">
+            <TextBlock Text="TapoKeeper" FontSize="32" FontWeight="Bold" />
+            <TextBlock Text="TP-Link Tapo Smart Plug Monitor - Avalonia UI Edition"
+                       FontSize="14" Foreground="Gray" />
+        </StackPanel>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
+            <Button Content="Connect" Command="{Binding ConnectCommand}"
+                    IsEnabled="{Binding !IsConnected}"
+                    Background="#2563eb" Foreground="White"
+                    Padding="15,8" />
+            <Button Content="Refresh" Command="{Binding RefreshCommand}"
+                    IsEnabled="{Binding IsConnected}"
+                    Padding="15,8" />
+            <Button Content="Export Markdown" Command="{Binding ExportMarkdownCommand}"
+                    IsEnabled="{Binding IsConnected}"
+                    Padding="15,8" />
+            <Button Content="Export CSV" Command="{Binding ExportCsvCommand}"
+                    IsEnabled="{Binding IsConnected}"
+                    Padding="15,8" />
+
+            <TextBlock Text="{Binding StatusMessage}"
+                       VerticalAlignment="Center"
+                       Margin="20,0,0,0"
+                       Foreground="Gray" />
+        </StackPanel>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2" RowDefinitions="Auto,*">
+            <!-- Summary Panel -->
+            <Border Grid.Row="0" Background="#f3f4f6" CornerRadius="8" Padding="20" Margin="0,0,0,20">
+                <Grid ColumnDefinitions="*,*,*,*">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Total Current Power" Foreground="Gray" FontSize="12" />
+                        <TextBlock Text="{Binding TotalPowerW, StringFormat='{}{0:F2} W'}"
+                                   FontSize="24" FontWeight="Bold" Foreground="#2563eb" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Today's Energy" Foreground="Gray" FontSize="12" />
+                        <TextBlock Text="{Binding TotalTodayKwh, StringFormat='{}{0:F3} kWh'}"
+                                   FontSize="24" FontWeight="Bold" Foreground="#16a34a" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="This Month's Energy" Foreground="Gray" FontSize="12" />
+                        <TextBlock Text="{Binding TotalMonthKwh, StringFormat='{}{0:F3} kWh'}"
+                                   FontSize="24" FontWeight="Bold" Foreground="#ea580c" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3">
+                        <TextBlock Text="Estimated Cost" Foreground="Gray" FontSize="12" />
+                        <TextBlock Text="{Binding EstimatedCost, StringFormat='${}{0:F2}'}"
+                                   FontSize="24" FontWeight="Bold" Foreground="#dc2626" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Device List -->
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+                <DataGrid ItemsSource="{Binding Devices}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="All"
+                          CanUserSortColumns="True"
+                          CanUserResizeColumns="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Device" Binding="{Binding Alias}" Width="*" />
+                        <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="100" />
+                        <DataGridTextColumn Header="Status" Width="80">
+                            <DataGridTextColumn.Binding>
+                                <Binding Path="DeviceOn" Converter="{x:Static vm:MainWindowViewModel.StatusConverter}" />
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Power (W)"
+                                          Binding="{Binding CurrentPower.CurrentPowerW, StringFormat='{}{0:F2}'}"
+                                          Width="100" />
+                        <DataGridTextColumn Header="Today (kWh)"
+                                          Binding="{Binding CurrentPower.TodayEnergyKwh, StringFormat='{}{0:F3}'}"
+                                          Width="110" />
+                        <DataGridTextColumn Header="Month (kWh)"
+                                          Binding="{Binding CurrentPower.MonthEnergyKwh, StringFormat='{}{0:F3}'}"
+                                          Width="110" />
+                        <DataGridTextColumn Header="Voltage (V)"
+                                          Binding="{Binding CurrentPower.CurrentVoltageV, StringFormat='{}{0:F1}'}"
+                                          Width="100" />
+                        <DataGridTextColumn Header="Current (A)"
+                                          Binding="{Binding CurrentPower.CurrentCurrentA, StringFormat='{}{0:F3}'}"
+                                          Width="100" />
+                        <DataGridTextColumn Header="IP Address" Binding="{Binding IpAddress}" Width="120" />
+
+                        <DataGridTemplateColumn Header="Actions" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Toggle"
+                                            Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ToggleDeviceCommand}"
+                                            CommandParameter="{Binding}"
+                                            Padding="8,4" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+
+        <!-- Footer -->
+        <Border Grid.Row="3" Margin="0,20,0,0" Padding="10,0,10,0">
+            <TextBlock Text="TapoKeeper v2.0 - Avalonia UI Edition | Licensed under AGPL v3 / Commercial"
+                       FontSize="11" Foreground="Gray"
+                       HorizontalAlignment="Center" />
+        </Border>
+    </Grid>
+</Window>
