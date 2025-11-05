@@ -1,4 +1,4 @@
-# .NET / C# Build outputs
+# Build outputs
 bin/
 obj/
 dist/
@@ -6,6 +6,9 @@ publish/
 *.dll
 *.exe
 *.pdb
+
+# TypeScript
+*.tsbuildinfo
 
 # User-specific files
 *.suo
